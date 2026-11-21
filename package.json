@@ -12,6 +12,7 @@
     "build": "tsc -p tsconfig.build.json",
     "start": "cross-env NODE_ENV=production node dist/server.js",
     "start:e2e": "cross-env STORAGE=memory tsx src/server.ts",
+    "db:migrate": "tsx src/db/migrate.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
