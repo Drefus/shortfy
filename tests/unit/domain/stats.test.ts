@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { Click } from '../../../src/domain/link.js';
+import type { Click } from '../../../src/domain/link.types.js';
 import {
   DIRECT_REFERRER,
   clicksByReferrer,

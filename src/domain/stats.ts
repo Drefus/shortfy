@@ -1,4 +1,4 @@
-import type { Click } from './link.js';
+import type { Click } from './link.types.js';
 
 export interface DailyCount {
   /** Data no formato AAAA-MM-DD (UTC). */

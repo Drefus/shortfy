@@ -6,9 +6,8 @@ export default defineConfig({
     environment: 'node',
     coverage: {
       provider: 'v8',
-      experimentalAstAwareRemapping: true,
       include: ['src/**/*.ts'],
-      exclude: ['src/server.ts', 'src/**/*.d.ts'],
+      exclude: ['src/server.ts', 'src/**/*.d.ts', 'src/**/*.types.ts'],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',
       thresholds: {
