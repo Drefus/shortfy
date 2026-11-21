@@ -7,7 +7,20 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       include: ['src/**/*.ts'],
-      exclude: ['src/server.ts', 'src/**/*.d.ts', 'src/**/*.types.ts'],
+      exclude: [
+        // Ponto de entrada: apenas lê variáveis de ambiente e chama listen().
+        'src/server.ts',
+        // Arquivos só de tipos não geram código JavaScript a ser executado.
+        'src/**/*.d.ts',
+        'src/**/*.types.ts',
+        // Acesso a PostgreSQL real: testes e CI rodam com STORAGE=memory, sem banco.
+        // O comportamento é o mesmo contrato de LinkRepository já coberto pelos
+        // testes do InMemoryLinkRepository; testá-lo exigiria um banco de verdade
+        // (teste de integração), e mocks de `pg` testariam apenas a implementação.
+        'src/repositories/postgres-link-repository.ts',
+        // Script de migração: executa SQL contra o banco configurado em DATABASE_URL.
+        'src/db/**',
+      ],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',
       thresholds: {
