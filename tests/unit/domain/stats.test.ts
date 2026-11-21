@@ -8,7 +8,7 @@ import {
 } from '../../../src/domain/stats.js';
 
 function click(occurredAt: string, referrer: string | null = null): Click {
-  return { slug: 'abc', occurredAt: new Date(occurredAt), referrer };
+  return { code: 'abc1234', occurredAt: new Date(occurredAt), referrer };
 }
 
 describe('clicksPerDay', () => {
