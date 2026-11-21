@@ -13,3 +13,5 @@ export interface Click {
   /** Domínio de origem do clique, ou null quando o acesso foi direto. */
   referrer: string | null;
 }
+
+export type Device = 'desktop' | 'mobile' | 'tablet' | 'bot';
