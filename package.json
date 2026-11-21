@@ -8,18 +8,23 @@
     "node": ">=20"
   },
   "scripts": {
+    "dev": "cross-env STORAGE=memory tsx watch src/server.ts",
     "build": "tsc -p tsconfig.build.json",
+    "start": "cross-env NODE_ENV=production node dist/server.js",
+    "start:e2e": "cross-env STORAGE=memory tsx src/server.ts",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "test": "cross-env STORAGE=memory vitest run",
+    "test:watch": "cross-env STORAGE=memory vitest",
+    "test:coverage": "cross-env STORAGE=memory vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.65.1",
     "@types/express": "^4.17.25",
     "@types/node": "^20.19.43",
     "@types/supertest": "^6.0.3",
