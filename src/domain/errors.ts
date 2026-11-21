@@ -7,4 +7,22 @@ export class DomainError extends Error {
 
 export class InvalidUrlError extends DomainError {}
 
-export class InvalidSlugError extends DomainError {}
+export class InvalidAliasError extends DomainError {}
+
+export class AliasTakenError extends DomainError {
+  constructor(readonly alias: string) {
+    super(`O alias "${alias}" já está em uso.`);
+  }
+}
+
+export class LinkNotFoundError extends DomainError {
+  constructor(readonly code: string) {
+    super(`Nenhum link encontrado para o código "${code}".`);
+  }
+}
+
+export class LinkExpiredError extends DomainError {
+  constructor(readonly code: string) {
+    super(`O link "${code}" expirou.`);
+  }
+}

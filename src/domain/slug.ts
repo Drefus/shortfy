@@ -1,5 +1,5 @@
 import { randomInt } from 'node:crypto';
-import { InvalidSlugError } from './errors.js';
+import { InvalidAliasError } from './errors.js';
 
 export const SLUG_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 export const DEFAULT_SLUG_LENGTH = 7;
@@ -41,21 +41,21 @@ export function generateSlug(
 
 /**
  * Valida um alias personalizado escolhido pelo usuário e devolve sua forma final.
- * Lança InvalidSlugError quando o alias não é aceitável.
+ * Lança InvalidAliasError quando o alias não é aceitável.
  */
 export function validateCustomSlug(input: string): string {
   const slug = input.trim();
 
   if (slug.length < MIN_SLUG_LENGTH || slug.length > MAX_SLUG_LENGTH) {
-    throw new InvalidSlugError(
+    throw new InvalidAliasError(
       `O alias deve ter entre ${MIN_SLUG_LENGTH} e ${MAX_SLUG_LENGTH} caracteres.`,
     );
   }
   if (!SLUG_PATTERN.test(slug)) {
-    throw new InvalidSlugError('O alias só pode conter letras, números, hífen e sublinhado.');
+    throw new InvalidAliasError('O alias só pode conter letras, números, hífen e sublinhado.');
   }
   if (RESERVED_SLUGS.has(slug.toLowerCase())) {
-    throw new InvalidSlugError(`O alias "${slug}" é reservado pelo sistema.`);
+    throw new InvalidAliasError(`O alias "${slug}" é reservado pelo sistema.`);
   }
   return slug;
 }

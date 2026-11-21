@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { InvalidSlugError } from '../../../src/domain/errors.js';
+import { InvalidAliasError } from '../../../src/domain/errors.js';
 import {
   DEFAULT_SLUG_LENGTH,
   MAX_SLUG_LENGTH,
@@ -66,7 +66,7 @@ describe('validateCustomSlug', () => {
   });
 
   it('rejeita alias mais curto que o mínimo', () => {
-    expect(() => validateCustomSlug('ab')).toThrow(InvalidSlugError);
+    expect(() => validateCustomSlug('ab')).toThrow(InvalidAliasError);
   });
 
   it('rejeita alias mais longo que o máximo', () => {
@@ -89,6 +89,6 @@ describe('validateCustomSlug', () => {
   });
 
   it('rejeita alias reservado independentemente de maiúsculas e minúsculas', () => {
-    expect(() => validateCustomSlug('ADMIN')).toThrow(InvalidSlugError);
+    expect(() => validateCustomSlug('ADMIN')).toThrow(InvalidAliasError);
   });
 });
