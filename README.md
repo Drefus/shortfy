@@ -25,13 +25,13 @@ A implementação do repositório é escolhida por `STORAGE=memory|postgres`. Te
 
 ## Scripts
 
-| Comando                 | Descrição                                   |
-| ----------------------- | ------------------------------------------- |
-| `npm run lint`          | ESLint                                      |
-| `npm run typecheck`     | Verificação de tipos                        |
-| `npm test`              | Testes de unidade e integração              |
-| `npm run test:coverage` | Testes com cobertura (mínimo de 80%)        |
-| `npm run build`         | Compila para `dist/`                        |
+| Comando                 | Descrição                            |
+| ----------------------- | ------------------------------------ |
+| `npm run lint`          | ESLint                               |
+| `npm run typecheck`     | Verificação de tipos                 |
+| `npm test`              | Testes de unidade e integração       |
+| `npm run test:coverage` | Testes com cobertura (mínimo de 80%) |
+| `npm run build`         | Compila para `dist/`                 |
 
 ## Configuração
 

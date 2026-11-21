@@ -41,12 +41,14 @@ describe('normalizeUrl', () => {
     expect(() => normalizeUrl('example.com')).toThrow(InvalidUrlError);
   });
 
-  it.each(['ftp://example.com', 'javascript:alert(1)', 'mailto:alguem@example.com', 'file:///etc/passwd'])(
-    'rejeita o protocolo não suportado em %s',
-    (url) => {
-      expect(() => normalizeUrl(url)).toThrow('A URL deve usar o protocolo http ou https.');
-    },
-  );
+  it.each([
+    'ftp://example.com',
+    'javascript:alert(1)',
+    'mailto:alguem@example.com',
+    'file:///etc/passwd',
+  ])('rejeita o protocolo não suportado em %s', (url) => {
+    expect(() => normalizeUrl(url)).toThrow('A URL deve usar o protocolo http ou https.');
+  });
 
   it('rejeita URL maior que o limite de caracteres', () => {
     const longa = `https://example.com/${'a'.repeat(MAX_URL_LENGTH)}`;
