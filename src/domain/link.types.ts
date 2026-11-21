@@ -7,11 +7,13 @@ export interface Link {
   expiresAt?: Date;
 }
 
-export interface Click {
-  code: string;
-  occurredAt: Date;
-  /** Domínio de origem do clique, ou null quando o acesso foi direto. */
-  referrer: string | null;
-}
-
 export type Device = 'desktop' | 'mobile' | 'tablet' | 'bot';
+
+export interface Click {
+  linkId: string;
+  timestamp: Date;
+  /** Hostname de origem do clique, ou "direto" quando não há referer. */
+  referrer: string;
+  device: Device;
+  browser: string;
+}
