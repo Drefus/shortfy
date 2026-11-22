@@ -24,6 +24,8 @@ export interface LinkServiceDeps {
   generateId?: () => string;
   /** Domínio do próprio encurtador, para impedir links que apontem para ele. */
   shortenerHost?: string;
+  /** Fuso (IANA) usado para agrupar os cliques por dia nas estatísticas. */
+  statsTimeZone?: string;
 }
 
 export interface CreateLinkInput {
@@ -49,6 +51,7 @@ export class LinkService {
   private readonly generateCode: () => string;
   private readonly generateId: () => string;
   private readonly shortenerHost: string | undefined;
+  private readonly statsTimeZone: string;
 
   constructor(deps: LinkServiceDeps) {
     this.repository = deps.repository;
@@ -56,6 +59,7 @@ export class LinkService {
     this.generateCode = deps.generateCode ?? (() => generateCode());
     this.generateId = deps.generateId ?? randomUUID;
     this.shortenerHost = deps.shortenerHost;
+    this.statsTimeZone = deps.statsTimeZone ?? 'UTC';
   }
 
   /**
@@ -104,7 +108,17 @@ export class LinkService {
   async getStats(code: string): Promise<LinkStats> {
     const link = await this.findLink(code);
     const clicks = await this.repository.getClicks(link.id);
-    return { link, stats: aggregateClicks(clicks, this.clock()) };
+    return { link, stats: aggregateClicks(clicks, this.clock(), this.statsTimeZone) };
+  }
+
+  /** Busca o link pelo código; lança LinkNotFoundError quando não existe. */
+  async getLink(code: string): Promise<Link> {
+    return this.findLink(code);
+  }
+
+  /** Links criados mais recentemente, do mais novo para o mais antigo. */
+  async listRecent(limit: number): Promise<Link[]> {
+    return this.repository.listRecent(limit);
   }
 
   private async findLink(code: string): Promise<Link> {

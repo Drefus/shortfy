@@ -177,6 +177,32 @@ describe('LinkService', () => {
     });
   });
 
+  describe('getLink', () => {
+    it('deve devolver o link pelo código', async () => {
+      const link = await service.createLink({ url: 'https://example.com' });
+
+      expect(await service.getLink(link.code)).toEqual(link);
+    });
+
+    it('deve lançar LinkNotFoundError para código inexistente', async () => {
+      await expect(service.getLink('naoexiste')).rejects.toThrow(LinkNotFoundError);
+    });
+  });
+
+  describe('listRecent', () => {
+    it('deve listar os links do mais novo para o mais antigo, até o limite', async () => {
+      await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
+      agora = new Date('2026-03-10T13:00:00Z');
+      await service.createLink({ url: 'https://dois.com', alias: 'dois' });
+      agora = new Date('2026-03-10T14:00:00Z');
+      await service.createLink({ url: 'https://tres.com', alias: 'tres' });
+
+      const recentes = await service.listRecent(2);
+
+      expect(recentes.map((link) => link.code)).toEqual(['tres', 'dois']);
+    });
+  });
+
   describe('getStats', () => {
     it('deve devolver o link e as estatísticas agregadas dos cliques', async () => {
       const link = await service.createLink({ url: 'https://example.com' });
@@ -188,6 +214,21 @@ describe('LinkService', () => {
       expect(encontrado).toEqual(link);
       expect(stats.total).toBe(2);
       expect(stats.lastClickAt).toEqual(agora);
+    });
+
+    it('deve agrupar os cliques por dia no fuso configurado', async () => {
+      service = new LinkService({
+        repository,
+        clock: () => agora,
+        statsTimeZone: 'America/Sao_Paulo',
+      });
+      const link = await service.createLink({ url: 'https://example.com', alias: 'noite' });
+      agora = new Date('2026-03-11T01:00:00Z'); // 22:00 do dia 10 em São Paulo
+      await service.resolve(link.code);
+
+      const { stats } = await service.getStats(link.code);
+
+      expect(stats.clicksPerDay.at(-1)).toEqual({ date: '2026-03-10', count: 1 });
     });
 
     it('deve informar total zero para link sem cliques', async () => {
