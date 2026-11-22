@@ -1,13 +1,15 @@
 <%- include('partials/header') %>
 
 <section class="card" aria-labelledby="titulo-stats">
-  <p><a href="/">← Voltar</a></p>
-  <h1 id="titulo-stats">Estatísticas de /<%= link.code %></h1>
+  <div class="page-title">
+    <h1 id="titulo-stats">Estatísticas de /<%= link.code %></h1>
+    <a href="/">← Voltar</a>
+  </div>
   <dl class="details">
     <dt>Link curto</dt>
     <dd class="copy-row">
       <a id="link-curto" class="short-url" href="<%= link.shortUrl %>" data-testid="short-url"><%= link.shortUrl %></a>
-      <button type="button" class="btn btn-secondary" data-copy="#link-curto" data-testid="copy-button">Copiar</button>
+      <button type="button" class="btn btn-secondary btn-small" data-copy="#link-curto" data-testid="copy-button">Copiar</button>
     </dd>
     <dt>Destino</dt>
     <dd class="break" data-testid="original-url"><a href="<%= link.originalUrl %>" rel="noopener noreferrer"><%= link.originalUrl %></a></dd>

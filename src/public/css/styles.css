@@ -358,11 +358,38 @@ input[aria-invalid='true'] {
   white-space: nowrap;
 }
 
+/* Título da página com uma ação (ex.: "Voltar") alinhada à direita. */
+.page-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+}
+
+/* O título encolhe e quebra linha; a ação fica sempre à direita, na primeira linha. */
+.page-title h1 {
+  margin: 0;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.page-title > a {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
 .details {
   display: grid;
   grid-template-columns: max-content 1fr;
+  /* Rótulo e valor alinhados pela linha do texto, mesmo com o botão Copiar ao lado. */
+  align-items: baseline;
   gap: 8px 16px;
   margin: 16px 0 0;
+}
+
+.details .copy-row {
+  margin: 0;
+  gap: 8px;
 }
 
 .details dt {
