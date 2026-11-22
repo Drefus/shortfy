@@ -116,9 +116,10 @@ export class LinkService {
     return this.findLink(code);
   }
 
-  /** Links criados mais recentemente, do mais novo para o mais antigo. */
-  async listRecent(limit: number): Promise<Link[]> {
-    return this.repository.listRecent(limit);
+  /** Busca vários links pelos códigos, na mesma ordem, ignorando os que não existem. */
+  async findLinks(codes: readonly string[]): Promise<Link[]> {
+    const links = await Promise.all(codes.map((code) => this.repository.findByCode(code)));
+    return links.filter((link): link is Link => link !== null);
   }
 
   private async findLink(code: string): Promise<Link> {

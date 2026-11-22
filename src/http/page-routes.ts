@@ -1,4 +1,4 @@
-import { Router, type RequestHandler, type Response } from 'express';
+import { Router, type Request, type RequestHandler, type Response } from 'express';
 import {
   AliasTakenError,
   InvalidAliasError,
@@ -12,9 +12,14 @@ import type { LinkService } from '../services/link-service.js';
 import { asyncHandler } from './async-handler.js';
 import { parseCreateLinkBody } from './create-link-input.js';
 import { toHttpError } from './error-handler.js';
+import {
+  addRecentCode,
+  readRecentCodes,
+  RECENT_LINKS_COOKIE,
+  RECENT_LINKS_MAX_AGE_MS,
+  serializeRecentCodes,
+} from './recent-links-cookie.js';
 import { deviceLabel, formatDay, shortUrlFor } from './view-helpers.js';
-
-export const RECENT_LINKS_LIMIT = 10;
 
 export interface PageRoutesOptions {
   service: LinkService;
@@ -55,8 +60,14 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
     statsPath: `/stats/${encodeURIComponent(link.code)}`,
   });
 
-  async function renderHome(res: Response, status: number, state: HomeState): Promise<void> {
-    const recent = await service.listRecent(RECENT_LINKS_LIMIT);
+  /** Links recentes deste navegador, lidos do cookie (não há contas de usuário). */
+  async function renderHome(
+    req: Request,
+    res: Response,
+    status: number,
+    state: HomeState,
+  ): Promise<void> {
+    const recent = await service.findLinks(readRecentCodes(req.headers.cookie));
     res.status(status).render('home', {
       title: 'Shortfy — encurtador de links',
       created: state.created ? toView(state.created) : null,
@@ -81,7 +92,7 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
   router.get(
     '/',
     asyncHandler(async (req, res) => {
-      await renderHome(res, 200, { created: await findCreated(req.query.criado) });
+      await renderHome(req, res, 200, { created: await findCreated(req.query.criado) });
     }),
   );
 
@@ -92,13 +103,20 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
     asyncHandler(async (req, res) => {
       try {
         const link = await service.createLink(parseCreateLinkBody(req.body));
+        const codes = addRecentCode(readRecentCodes(req.headers.cookie), link.code);
+        res.cookie(RECENT_LINKS_COOKIE, serializeRecentCodes(codes), {
+          httpOnly: true,
+          sameSite: 'lax',
+          secure: req.secure,
+          maxAge: RECENT_LINKS_MAX_AGE_MS,
+        });
         res.redirect(303, `/?criado=${encodeURIComponent(link.code)}`);
       } catch (error) {
         const field = formFieldFor(error);
         if (field === null || !(error instanceof Error)) {
           throw error;
         }
-        await renderHome(res, toHttpError(error).status, {
+        await renderHome(req, res, toHttpError(error).status, {
           values: formValues(req.body),
           errors: { [field]: error.message },
         });
