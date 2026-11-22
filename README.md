@@ -5,7 +5,7 @@
 
 ## Produção
 
-Aplicação publicada em: **<!-- PREENCHER: URL do Render, ex.: https://shortfy.onrender.com -->**
+Aplicação publicada em: **<https://shortfy.onrender.com>**
 
 > **Observação:** o serviço roda no plano gratuito do Render, que hiberna a aplicação após
 > cerca de 15 minutos sem acessos. O primeiro acesso depois disso pode levar até um minuto
