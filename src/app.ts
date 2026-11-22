@@ -9,6 +9,7 @@ import { linkRoutes } from './http/link-routes.js';
 import { pageRoutes } from './http/page-routes.js';
 import { rateLimit } from './http/rate-limit.js';
 import { redirectRoutes } from './http/redirect-routes.js';
+import { testRoutes } from './http/test-routes.js';
 import { DISPLAY_TIME_ZONE, formatDateTime } from './http/view-helpers.js';
 import { InMemoryLinkRepository } from './repositories/in-memory-link-repository.js';
 import type { LinkRepository } from './repositories/link-repository.types.js';
@@ -34,6 +35,8 @@ export interface AppDeps {
   /** Endereço público usado para montar os links curtos (BASE_URL). */
   baseUrl?: string;
   rateLimit?: { limit: number; windowMs: number };
+  /** Habilita rotas de apoio aos testes e2e (apenas com NODE_ENV=test). */
+  enableTestRoutes?: boolean;
 }
 
 export function createApp(deps: AppDeps = {}): Express {
@@ -62,6 +65,9 @@ export function createApp(deps: AppDeps = {}): Express {
   app.use(healthRoutes());
   app.use(linkRoutes({ service, baseUrl, createLimiter }));
   app.use(pageRoutes({ service, baseUrl, createLimiter }));
+  if (deps.enableTestRoutes) {
+    app.use(testRoutes());
+  }
   app.use(redirectRoutes(service));
   app.use(notFoundHandler);
   app.use(errorHandler);

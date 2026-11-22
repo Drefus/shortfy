@@ -18,7 +18,11 @@ function createRepository(): LinkRepository {
   throw new Error(`STORAGE inválido: "${storage}". Use "memory" ou "postgres".`);
 }
 
-const app = createApp({ repository: createRepository(), baseUrl });
+const app = createApp({
+  repository: createRepository(),
+  baseUrl,
+  enableTestRoutes: process.env.NODE_ENV === 'test',
+});
 
 app.listen(port, () => {
   console.log(`Shortfy rodando em http://localhost:${port} (links em ${baseUrl})`);

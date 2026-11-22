@@ -179,6 +179,21 @@ describe('páginas web', () => {
       expect(response.text).toContain('Link expirado');
     });
 
+    it('deve servir a página de destino de testes quando habilitada', async () => {
+      app = buildApp({ enableTestRoutes: true });
+
+      const response = await request(app).get('/__test/destino');
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('Página de destino');
+    });
+
+    it('não deve expor a página de destino de testes por padrão', async () => {
+      const response = await request(app).get('/__test/destino');
+
+      expect(response.status).toBe(404);
+    });
+
     it('deve servir a folha de estilos', async () => {
       const response = await request(app).get('/static/css/styles.css');
 

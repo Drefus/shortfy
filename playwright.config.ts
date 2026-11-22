@@ -18,6 +18,7 @@ export default defineConfig({
     command: 'npm run start:e2e',
     url: `http://localhost:${PORT}/health`,
     reuseExistingServer: !process.env.CI,
-    env: { PORT: String(PORT), STORAGE: 'memory' },
+    // NODE_ENV=test habilita /__test/destino, usado como destino local dos redirecionamentos.
+    env: { PORT: String(PORT), STORAGE: 'memory', NODE_ENV: 'test' },
   },
 });
