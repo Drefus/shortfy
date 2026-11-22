@@ -1,0 +1,31 @@
+# Blueprint do Render: https://render.com/docs/blueprint-spec
+services:
+  - type: web
+    name: shortfy
+    runtime: node
+    plan: free
+    # Mesma região do banco no Neon (AWS us-east-2, Ohio) para reduzir a latência.
+    region: ohio
+    branch: main
+    # Só publica depois que o CI (Linux, macOS e Windows) ficar verde no commit.
+    autoDeployTrigger: checksPass
+    # A versão do Node vem do .nvmrc.
+    # NODE_ENV não é definido aqui de propósito: com NODE_ENV=production o `npm ci`
+    # pularia as devDependencies (typescript e tsx), necessárias no build e na migração.
+    # O script `start` já define NODE_ENV=production ao subir o servidor.
+    buildCommand: npm ci && npm run build
+    startCommand: npm run db:migrate && npm start
+    healthCheckPath: /health
+    envVars:
+      - key: STORAGE
+        value: postgres
+      # String de conexão do Neon: pedida ao criar o Blueprint, nunca versionada.
+      - key: DATABASE_URL
+        sync: false
+      # BASE_URL é opcional: sem ela, o app usa RENDER_EXTERNAL_URL
+      # (ex.: https://shortfy.onrender.com), definida automaticamente pelo Render.
+      - key: RATE_LIMIT_PER_MINUTE
+        value: '30'
+      # Um proxy reverso do Render fica à frente do app; o IP real vem em X-Forwarded-For.
+      - key: TRUST_PROXY
+        value: '1'
