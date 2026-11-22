@@ -351,6 +351,12 @@ input[aria-invalid='true'] {
   min-width: 0;
 }
 
+.see-all {
+  display: inline-block;
+  margin-top: 12px;
+  font-weight: 600;
+}
+
 .click-count {
   color: var(--text);
   font-weight: 600;
@@ -505,7 +511,7 @@ details {
     flex: 0 0 auto;
   }
 
-  .recent-list {
+  .page-home .recent-list {
     max-height: 60vh;
   }
 }

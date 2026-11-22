@@ -21,6 +21,9 @@ import {
 } from './recent-links-cookie.js';
 import { deviceLabel, formatDay, shortUrlFor } from './view-helpers.js';
 
+/** Quantos links do navegador aparecem na página inicial; os demais ficam em /meus-links. */
+export const HOME_RECENT_LIMIT = 10;
+
 export interface PageRoutesOptions {
   service: LinkService;
   baseUrl: string;
@@ -60,20 +63,28 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
     statsPath: `/stats/${encodeURIComponent(link.code)}`,
   });
 
-  /** Links recentes deste navegador, lidos do cookie (não há contas de usuário). */
+  /** Links deste navegador, lidos do cookie (não há contas de usuário), com os cliques. */
+  async function linksDoNavegador(req: Request, limite?: number) {
+    const codes = readRecentCodes(req.headers.cookie).slice(0, limite);
+    const resumos = await service.findLinkSummaries(codes);
+    return resumos.map(({ link, totalClicks }) => ({ ...toView(link), totalClicks }));
+  }
+
   async function renderHome(
     req: Request,
     res: Response,
     status: number,
     state: HomeState,
   ): Promise<void> {
-    const recent = await service.findLinkSummaries(readRecentCodes(req.headers.cookie));
+    const recent = await linksDoNavegador(req, HOME_RECENT_LIMIT);
+    const totalSalvos = readRecentCodes(req.headers.cookie).length;
     res.status(status).render('home', {
       title: 'Shortfy',
       created: state.created ? toView(state.created) : null,
       values: state.values ?? {},
       errors: state.errors ?? {},
-      recent: recent.map(({ link, totalClicks }) => ({ ...toView(link), totalClicks })),
+      recent,
+      hasMore: totalSalvos > HOME_RECENT_LIMIT,
     });
   }
 
@@ -121,6 +132,16 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
           errors: { [field]: error.message },
         });
       }
+    }),
+  );
+
+  router.get(
+    '/meus-links',
+    asyncHandler(async (req, res) => {
+      res.render('my-links', {
+        title: 'Meus links — Shortfy',
+        links: await linksDoNavegador(req),
+      });
     }),
   );
 

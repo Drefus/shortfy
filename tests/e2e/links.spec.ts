@@ -97,6 +97,26 @@ test.describe('links recentes', () => {
   });
 });
 
+test.describe('meus links', () => {
+  test('deve listar todos os links do navegador na página Meus links', async ({
+    page,
+    baseURL,
+  }) => {
+    const prefixo = aliasUnico('todos');
+    for (let i = 1; i <= 11; i++) {
+      await encurtar(page, { url: urlDeDestino(baseURL), alias: `${prefixo}-${i}` });
+    }
+    await page.goto('/');
+    await expect(page.locator('[data-testid="recent-links"] li')).toHaveCount(10);
+
+    await page.getByRole('link', { name: 'Ver todos os meus links' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Meus links' })).toBeVisible();
+    await expect(page.locator('[data-testid="my-links"] li')).toHaveCount(11);
+    await expect(page.getByTestId('my-links')).toContainText(`${baseURL}/${prefixo}-1`);
+  });
+});
+
 test.describe('acessar links', () => {
   test('deve redirecionar o link curto para a URL original', async ({ page, baseURL }) => {
     const destino = urlDeDestino(baseURL);

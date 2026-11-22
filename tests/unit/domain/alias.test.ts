@@ -63,7 +63,7 @@ describe('validateAlias', () => {
       expect(() => validateAlias('meu.link')).toThrow(InvalidAliasError);
     });
 
-    it.each(['api', 'health', 'stats', 'admin', 'static'])(
+    it.each(['api', 'health', 'stats', 'admin', 'static', 'meus-links'])(
       'deve rejeitar a palavra reservada "%s"',
       (alias) => {
         expect(() => validateAlias(alias)).toThrow(`O alias "${alias}" é reservado pelo sistema.`);

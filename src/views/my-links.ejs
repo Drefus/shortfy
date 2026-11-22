@@ -1,0 +1,20 @@
+<%- include('partials/header') %>
+
+<section class="card" aria-labelledby="titulo-meus-links">
+  <div class="page-title">
+    <h1 id="titulo-meus-links">Meus links</h1>
+    <a href="/">← Voltar</a>
+  </div>
+  <p class="muted" data-testid="my-links-count">
+    <% if (links.length === 0) { %>
+    Você ainda não criou links neste navegador.
+    <% } else { %>
+    <%= links.length %> <%= links.length === 1 ? 'link criado' : 'links criados' %> neste navegador, do mais recente para o mais antigo.
+    <% } %>
+  </p>
+  <% if (links.length > 0) { %>
+  <%- include('partials/link-list', { links, testid: 'my-links' }) %>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

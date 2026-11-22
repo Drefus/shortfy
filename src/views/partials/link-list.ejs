@@ -1,0 +1,18 @@
+<%# Lista de links do navegador com cliques. Espera `links` (com shortUrl, statsPath e totalClicks). %>
+<ul class="recent-list" data-testid="<%= locals.testid || 'recent-links' %>">
+  <% links.forEach((link) => { %>
+  <li class="recent-item">
+    <div class="recent-main">
+      <a class="short-url" href="<%= link.shortUrl %>"><%= link.shortUrl %></a>
+      <span class="muted recent-url" title="<%= link.originalUrl %>"><%= link.originalUrl %></span>
+    </div>
+    <div class="recent-meta">
+      <span class="muted">
+        <%= formatDateTime(link.createdAt) %> ·
+        <strong class="click-count" data-testid="recent-clicks"><%= link.totalClicks %> <%= link.totalClicks === 1 ? 'clique' : 'cliques' %></strong>
+      </span>
+      <a href="<%= link.statsPath %>">Estatísticas detalhadas</a>
+    </div>
+  </li>
+  <% }) %>
+</ul>

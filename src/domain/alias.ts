@@ -10,6 +10,7 @@ export const RESERVED_ALIASES: ReadonlySet<string> = new Set([
   'stats',
   'admin',
   'static',
+  'meus-links',
 ]);
 
 const ALIAS_PATTERN = /^[A-Za-z0-9_-]+$/;

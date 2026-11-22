@@ -191,6 +191,59 @@ describe('páginas web', () => {
     });
   });
 
+  describe('GET /meus-links', () => {
+    async function criarLinks(navegador: ReturnType<typeof request.agent>, quantidade: number) {
+      for (let i = 1; i <= quantidade; i++) {
+        await navegador
+          .post('/')
+          .type('form')
+          .send({ url: `https://site${i}.com`, alias: `link-${i}` });
+      }
+    }
+
+    it('deve listar todos os links do navegador, além dos 10 da página inicial', async () => {
+      const navegador = request.agent(app);
+      await criarLinks(navegador, 12);
+
+      const response = await navegador.get('/meus-links');
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('12 links criados neste navegador');
+      expect(response.text.match(/class="recent-item"/g)).toHaveLength(12);
+      expect(response.text).toContain('https://shortfy.app/link-1<');
+    });
+
+    it('deve mostrar na página inicial só os 10 mais recentes e o link para ver todos', async () => {
+      const navegador = request.agent(app);
+      await criarLinks(navegador, 11);
+
+      const response = await navegador.get('/');
+
+      expect(response.text.match(/class="recent-item"/g)).toHaveLength(10);
+      expect(response.text).not.toContain('https://shortfy.app/link-1<');
+      expect(response.text).toContain('href="/meus-links"');
+    });
+
+    it('não deve oferecer o link para ver todos quando há até 10 links', async () => {
+      const navegador = request.agent(app);
+      await criarLinks(navegador, 10);
+
+      const response = await navegador.get('/');
+
+      expect(response.text).not.toContain('href="/meus-links"');
+    });
+
+    it('deve informar quando o navegador ainda não criou links', async () => {
+      await criarLinks(request.agent(app), 2);
+
+      const response = await request.agent(app).get('/meus-links');
+
+      expect(response.status).toBe(200);
+      expect(response.text).toContain('Você ainda não criou links neste navegador.');
+      expect(response.text).not.toContain('class="recent-item"');
+    });
+  });
+
   describe('GET /stats/:code', () => {
     it('deve exibir total de cliques, gráfico e tabelas do link', async () => {
       await enviarFormulario({ url: 'https://example.com', alias: 'promo' });
