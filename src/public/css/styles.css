@@ -351,6 +351,11 @@ input[aria-invalid='true'] {
   min-width: 0;
 }
 
+.click-count {
+  color: var(--text);
+  font-weight: 600;
+}
+
 .recent-url {
   white-space: nowrap;
   overflow: hidden;

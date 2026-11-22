@@ -61,6 +61,28 @@ describe('páginas web', () => {
       expect(response.text).toContain('Você ainda não criou links neste navegador.');
     });
 
+    it('deve mostrar a quantidade de cliques de cada link recente', async () => {
+      const navegador = request.agent(app);
+      await navegador.post('/').type('form').send({ url: 'https://um.com', alias: 'primeiro' });
+      await request(app).get('/primeiro');
+      await request(app).get('/primeiro');
+
+      const response = await navegador.get('/');
+
+      expect(response.text).toMatch(/data-testid="recent-clicks">\s*2 cliques\s*</);
+      expect(response.text).toContain('Estatísticas detalhadas');
+    });
+
+    it('deve usar o singular para um único clique', async () => {
+      const navegador = request.agent(app);
+      await navegador.post('/').type('form').send({ url: 'https://um.com', alias: 'primeiro' });
+      await request(app).get('/primeiro');
+
+      const response = await navegador.get('/');
+
+      expect(response.text).toMatch(/data-testid="recent-clicks">\s*1 clique\s*</);
+    });
+
     it('deve listar primeiro o link criado por último', async () => {
       const navegador = request.agent(app);
       await navegador.post('/').type('form').send({ url: 'https://um.com', alias: 'primeiro' });

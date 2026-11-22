@@ -67,13 +67,13 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
     status: number,
     state: HomeState,
   ): Promise<void> {
-    const recent = await service.findLinks(readRecentCodes(req.headers.cookie));
+    const recent = await service.findLinkSummaries(readRecentCodes(req.headers.cookie));
     res.status(status).render('home', {
       title: 'Shortfy — encurtador de links',
       created: state.created ? toView(state.created) : null,
       values: state.values ?? {},
       errors: state.errors ?? {},
-      recent: recent.map(toView),
+      recent: recent.map(({ link, totalClicks }) => ({ ...toView(link), totalClicks })),
     });
   }
 

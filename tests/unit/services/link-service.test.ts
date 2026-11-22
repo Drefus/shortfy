@@ -189,22 +189,33 @@ describe('LinkService', () => {
     });
   });
 
-  describe('findLinks', () => {
+  describe('findLinkSummaries', () => {
     it('deve devolver os links na ordem dos códigos informados', async () => {
       await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
       await service.createLink({ url: 'https://dois.com', alias: 'segundo' });
 
-      const links = await service.findLinks(['segundo', 'primeiro']);
+      const resumos = await service.findLinkSummaries(['segundo', 'primeiro']);
 
-      expect(links.map((link) => link.code)).toEqual(['segundo', 'primeiro']);
+      expect(resumos.map(({ link }) => link.code)).toEqual(['segundo', 'primeiro']);
     });
 
     it('deve ignorar códigos que não existem', async () => {
       await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
 
-      const links = await service.findLinks(['naoexiste', 'primeiro']);
+      const resumos = await service.findLinkSummaries(['naoexiste', 'primeiro']);
 
-      expect(links.map((link) => link.code)).toEqual(['primeiro']);
+      expect(resumos.map(({ link }) => link.code)).toEqual(['primeiro']);
+    });
+
+    it('deve informar o total de cliques de cada link', async () => {
+      await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
+      await service.createLink({ url: 'https://dois.com', alias: 'segundo' });
+      await service.resolve('primeiro');
+      await service.resolve('primeiro');
+
+      const resumos = await service.findLinkSummaries(['primeiro', 'segundo']);
+
+      expect(resumos.map((r) => r.totalClicks)).toEqual([2, 0]);
     });
   });
 

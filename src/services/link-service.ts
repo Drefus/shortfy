@@ -40,6 +40,12 @@ export interface ClickRequestInfo {
   userAgent?: string | null;
 }
 
+/** Link com o total de cliques, para listagens. */
+export interface LinkSummary {
+  link: Link;
+  totalClicks: number;
+}
+
 export interface LinkStats {
   link: Link;
   stats: ClickStats;
@@ -116,10 +122,19 @@ export class LinkService {
     return this.findLink(code);
   }
 
-  /** Busca vários links pelos códigos, na mesma ordem, ignorando os que não existem. */
-  async findLinks(codes: readonly string[]): Promise<Link[]> {
+  /**
+   * Busca vários links pelos códigos, com o total de cliques de cada um, na mesma
+   * ordem dos códigos e ignorando os que não existem.
+   */
+  async findLinkSummaries(codes: readonly string[]): Promise<LinkSummary[]> {
     const links = await Promise.all(codes.map((code) => this.repository.findByCode(code)));
-    return links.filter((link): link is Link => link !== null);
+    const existentes = links.filter((link): link is Link => link !== null);
+    return Promise.all(
+      existentes.map(async (link) => ({
+        link,
+        totalClicks: await this.repository.countClicks(link.id),
+      })),
+    );
   }
 
   private async findLink(code: string): Promise<Link> {
