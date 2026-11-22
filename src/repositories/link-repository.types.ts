@@ -14,6 +14,8 @@ export interface LinkRepository {
   registerClick(click: Click): Promise<void>;
   /** Cliques do link em ordem cronológica. */
   getClicks(linkId: string): Promise<Click[]>;
+  /** Quantidade de cliques do link (0 para link inexistente). */
+  countClicks(linkId: string): Promise<number>;
   /** Links mais recentes primeiro, até `limit` itens. */
   listRecent(limit: number): Promise<Link[]>;
 }

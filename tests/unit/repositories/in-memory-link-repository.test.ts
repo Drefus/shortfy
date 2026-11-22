@@ -117,6 +117,22 @@ describe('InMemoryLinkRepository', () => {
     });
   });
 
+  describe('countClicks', () => {
+    it('deve contar apenas os cliques do link informado', async () => {
+      await repo.save(link());
+      await repo.save(link({ id: 'id-2', code: 'outro12' }));
+      await repo.registerClick(click());
+      await repo.registerClick(click());
+      await repo.registerClick(click({ linkId: 'id-2' }));
+
+      expect(await repo.countClicks('id-1')).toBe(2);
+    });
+
+    it('deve devolver zero para link inexistente', async () => {
+      expect(await repo.countClicks('nao-existe')).toBe(0);
+    });
+  });
+
   describe('listRecent', () => {
     async function salvarTres() {
       await repo.save(link({ id: '1', code: 'antigo1', createdAt: new Date('2026-01-01') }));

@@ -98,6 +98,22 @@ export class PostgresLinkRepository implements LinkRepository {
     }
   }
 
+  async countClicks(linkId: string): Promise<number> {
+    try {
+      const { rows } = await this.pool.query<{ total: number }>(
+        `SELECT COUNT(*)::int AS total FROM clicks WHERE link_id = $1`,
+        [linkId],
+      );
+      return rows[0]?.total ?? 0;
+    } catch (error) {
+      // Id que não é UUID válido: nenhum link pode tê-lo.
+      if (pgErrorCode(error) === PG_INVALID_TEXT_REPRESENTATION) {
+        return 0;
+      }
+      throw error;
+    }
+  }
+
   async getClicks(linkId: string): Promise<Click[]> {
     try {
       const { rows } = await this.pool.query<ClickRow>(

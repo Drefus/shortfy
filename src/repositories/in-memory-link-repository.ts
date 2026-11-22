@@ -50,6 +50,10 @@ export class InMemoryLinkRepository implements LinkRepository {
     return clicks.map(copyClick).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
   }
 
+  async countClicks(linkId: string): Promise<number> {
+    return this.clicksByLinkId.get(linkId)?.length ?? 0;
+  }
+
   async listRecent(limit: number): Promise<Link[]> {
     if (limit <= 0) {
       return [];
