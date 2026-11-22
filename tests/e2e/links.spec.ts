@@ -77,6 +77,26 @@ test.describe('encurtar links', () => {
   });
 });
 
+test.describe('links recentes', () => {
+  test('deve listar os links apenas no navegador que os criou', async ({
+    page,
+    browser,
+    baseURL,
+  }) => {
+    const alias = aliasUnico('meu');
+    await encurtar(page, { url: urlDeDestino(baseURL), alias });
+    await page.goto('/');
+    await expect(page.getByTestId('recent-links')).toContainText(`${baseURL}/${alias}`);
+
+    const outroNavegador = await browser.newContext();
+    const outraPagina = await outroNavegador.newPage();
+    await outraPagina.goto('/');
+
+    await expect(outraPagina.getByText(`${baseURL}/${alias}`)).toHaveCount(0);
+    await outroNavegador.close();
+  });
+});
+
 test.describe('acessar links', () => {
   test('deve redirecionar o link curto para a URL original', async ({ page, baseURL }) => {
     const destino = urlDeDestino(baseURL);
