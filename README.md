@@ -5,7 +5,7 @@
 
 ## Integrantes
 Henrique Castro Caetano - 2023104941
-Pedro Henrique Fernandes de Oliveira - XXXXXXXXXX
+Pedro Henrique Fernandes de Oliveira - 2023104968
 
 ## Sobre o sistema
 
