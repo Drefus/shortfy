@@ -252,6 +252,19 @@ describe('páginas web', () => {
       expect(response.status).toBe(404);
     });
 
+    it('deve servir o ícone da aplicação em /favicon.ico', async () => {
+      const response = await request(app).get('/favicon.ico');
+
+      expect(response.status).toBe(200);
+      expect(response.headers['content-type']).toMatch(/image\/(x-icon|vnd\.microsoft\.icon)/);
+    });
+
+    it('deve usar apenas o nome da aplicação como título da página inicial', async () => {
+      const response = await request(app).get('/');
+
+      expect(response.text).toContain('<title>Shortfy</title>');
+    });
+
     it('deve servir a folha de estilos', async () => {
       const response = await request(app).get('/static/css/styles.css');
 

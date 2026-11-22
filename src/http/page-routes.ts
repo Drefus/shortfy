@@ -69,7 +69,7 @@ export function pageRoutes({ service, baseUrl, createLimiter }: PageRoutesOption
   ): Promise<void> {
     const recent = await service.findLinkSummaries(readRecentCodes(req.headers.cookie));
     res.status(status).render('home', {
-      title: 'Shortfy — encurtador de links',
+      title: 'Shortfy',
       created: state.created ? toView(state.created) : null,
       values: state.values ?? {},
       errors: state.errors ?? {},

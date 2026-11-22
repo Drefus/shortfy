@@ -69,6 +69,10 @@ export function createApp(deps: AppDeps = {}): Express {
   app.use(express.json());
   app.use(express.urlencoded({ extended: false }));
   app.use('/static', express.static(path.join(SRC_DIR, 'public')));
+  // Navegadores pedem /favicon.ico na raiz; sem esta rota, cairia no redirecionamento (404).
+  app.get('/favicon.ico', (_req, res) => {
+    res.sendFile(path.join(SRC_DIR, 'public', 'favicon.ico'), { maxAge: '7d' });
+  });
   app.use(healthRoutes());
   app.use(linkRoutes({ service, baseUrl, createLimiter }));
   app.use(pageRoutes({ service, baseUrl, createLimiter }));
