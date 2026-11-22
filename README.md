@@ -94,41 +94,25 @@ determinísticos sem depender de banco, horário real ou aleatoriedade.
 
 ## Uso de IA
 
-Foi utilizada IA para auxílio no desenvolvimento do código da aplicação.
+A IA foi usada como apoio em todas as etapas do desenvolvimento, sempre com revisão do grupo
+antes de cada commit.
 
-<!-- PREENCHER: descrevam com as palavras de vocês. A estrutura abaixo é só um guia. -->
+**Ferramenta:** [Claude Code](https://claude.com/claude-code) com o modelo **Claude Opus 5.5**
+(Anthropic).
 
-### Ferramentas utilizadas
+- **Planejamento:** definição da arquitetura em camadas, da stack e da divisão do trabalho em
+  fases (domínio, repositórios, serviços e rotas, interface, testes e2e, cobertura e deploy).
+- **Codificação:** implementação da aplicação e dos testes de unidade, integração e e2e, em
+  commits pequenos no padrão Conventional Commits.
+- **Revisão:** code review das mudanças feito com skills do Claude Code destinadas a isso
+  (revisão de correção e de simplificação do código), complementado por lint, typecheck,
+  testes e verificação visual das páginas no navegador.
+- **CI e deploy:** configuração do GitHub Actions, do Codecov e do Render, e diagnóstico de
+  problemas, como a lentidão na instalação do Playwright no Windows, corrigida no commit
+  [`de70cf0`](https://github.com/Drefus/shortfy/commit/de70cf0).
 
-| Ferramenta                     | Para que foi usada |
-| ------------------------------ | ------------------ |
-| <!-- ex.: Claude Code -->      | <!-- ... -->       |
-| <!-- ex.: ChatGPT, Copilot --> | <!-- ... -->       |
-
-### Uso por fase
-
-| Fase                          | Como a IA foi usada | O que foi feito sem IA |
-| ----------------------------- | ------------------- | ---------------------- |
-| Configuração do projeto e CI  | <!-- ... -->        | <!-- ... -->           |
-| Domínio e testes de unidade   | <!-- ... -->        | <!-- ... -->           |
-| Repositórios e banco de dados | <!-- ... -->        | <!-- ... -->           |
-| Serviço, rotas HTTP e páginas | <!-- ... -->        | <!-- ... -->           |
-| Testes de integração e e2e    | <!-- ... -->        | <!-- ... -->           |
-| Deploy em produção            | <!-- ... -->        | <!-- ... -->           |
-| Documentação                  | <!-- ... -->        | <!-- ... -->           |
-
-### Como revisamos o que foi gerado
-
-<!-- Exemplos do que descrever:
-- leitura de cada diff antes do commit e commits pequenos para facilitar a revisão;
-- execução local de lint, typecheck e testes antes de cada push, e CI nos 3 sistemas;
-- testes escritos ou conferidos à mão para casos de borda (ex.: expiração no instante exato);
-- trechos gerados que foram rejeitados ou reescritos, e por quê;
-- verificação manual da aplicação em produção. -->
-
-### Limitações e aprendizados
-
-<!-- O que a IA fez bem, onde errou e o que vocês aprenderam no processo. -->
+Todo o conteúdo gerado foi lido e validado pelo grupo, e as decisões de escopo e de design
+foram nossas.
 
 ## Execução dos testes
 
