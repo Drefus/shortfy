@@ -19,6 +19,12 @@ export default defineConfig({
     url: `http://localhost:${PORT}/health`,
     reuseExistingServer: !process.env.CI,
     // NODE_ENV=test habilita /__test/destino, usado como destino local dos redirecionamentos.
-    env: { PORT: String(PORT), STORAGE: 'memory', NODE_ENV: 'test' },
+    // Todos os testes criam links do mesmo IP: o limite alto evita respostas 429 entre eles.
+    env: {
+      PORT: String(PORT),
+      STORAGE: 'memory',
+      NODE_ENV: 'test',
+      RATE_LIMIT_PER_MINUTE: '1000',
+    },
   },
 });
