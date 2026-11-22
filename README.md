@@ -4,8 +4,9 @@
 [![codecov](https://codecov.io/gh/Drefus/shortfy/branch/main/graph/badge.svg)](https://codecov.io/gh/Drefus/shortfy)
 
 ## Integrantes
-Henrique Castro Caetano - 2023104941
-Pedro Henrique Fernandes de Oliveira - 2023104968
+
+- Henrique Castro Caetano - 2023104941
+- Pedro Henrique Fernandes de Oliveira - 2023104968
 
 ## Sobre o sistema
 
