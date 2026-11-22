@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   addRecentCode,
   readRecentCodes,
-  RECENT_LINKS_LIMIT,
+  MAX_SAVED_CODES,
   serializeRecentCodes,
 } from '../../../src/http/recent-links-cookie.js';
 
@@ -24,12 +24,12 @@ describe('readRecentCodes', () => {
   });
 
   it('deve ignorar códigos repetidos e respeitar o limite', () => {
-    const muitos = Array.from({ length: 15 }, (_, i) => `cod${i}`);
+    const muitos = Array.from({ length: MAX_SAVED_CODES + 5 }, (_, i) => `cod${i}`);
     const lidos = readRecentCodes(`shortfy_recentes=cod0.${muitos.join('.')}`);
 
-    expect(lidos).toHaveLength(RECENT_LINKS_LIMIT);
+    expect(lidos).toHaveLength(MAX_SAVED_CODES);
     expect(lidos[0]).toBe('cod0');
-    expect(new Set(lidos).size).toBe(RECENT_LINKS_LIMIT);
+    expect(new Set(lidos).size).toBe(MAX_SAVED_CODES);
   });
 });
 
@@ -43,13 +43,13 @@ describe('addRecentCode', () => {
   });
 
   it('deve descartar o mais antigo ao passar do limite', () => {
-    const cheia = Array.from({ length: RECENT_LINKS_LIMIT }, (_, i) => `cod${i}`);
+    const cheia = Array.from({ length: MAX_SAVED_CODES }, (_, i) => `cod${i}`);
 
     const nova = addRecentCode(cheia, 'novo');
 
-    expect(nova).toHaveLength(RECENT_LINKS_LIMIT);
+    expect(nova).toHaveLength(MAX_SAVED_CODES);
     expect(nova[0]).toBe('novo');
-    expect(nova).not.toContain(`cod${RECENT_LINKS_LIMIT - 1}`);
+    expect(nova).not.toContain(`cod${MAX_SAVED_CODES - 1}`);
   });
 });
 

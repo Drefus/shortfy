@@ -4,7 +4,8 @@
  * conhecer um código não dá acesso a nada além do próprio link, que já é público.
  */
 export const RECENT_LINKS_COOKIE = 'shortfy_recentes';
-export const RECENT_LINKS_LIMIT = 10;
+/** Quantos códigos o cookie guarda: cabe com folga nos ~4 KB de um cookie. */
+export const MAX_SAVED_CODES = 100;
 /** O cookie expira em um ano sem novos links. */
 export const RECENT_LINKS_MAX_AGE_MS = 365 * 24 * 60 * 60 * 1000;
 
@@ -24,12 +25,12 @@ export function readRecentCodes(cookieHeader: string | undefined): string[] {
   }
   const valor = par.slice(RECENT_LINKS_COOKIE.length + 1);
   const codigos = valor.split(SEPARATOR).filter((codigo) => CODE_PATTERN.test(codigo));
-  return [...new Set(codigos)].slice(0, RECENT_LINKS_LIMIT);
+  return [...new Set(codigos)].slice(0, MAX_SAVED_CODES);
 }
 
 /** Coloca o código no início da lista, sem repetir e respeitando o limite. */
 export function addRecentCode(codes: readonly string[], code: string): string[] {
-  return [code, ...codes.filter((existente) => existente !== code)].slice(0, RECENT_LINKS_LIMIT);
+  return [code, ...codes.filter((existente) => existente !== code)].slice(0, MAX_SAVED_CODES);
 }
 
 /** Valor do cookie para a lista de códigos. */
