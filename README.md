@@ -46,8 +46,9 @@ de onde e de quais dispositivos o link foi acessado.
 - **Estatísticas** na página `/stats/:code` e na API (`GET /api/links/:code/stats`): total de
   cliques, gráfico dos últimos 7 dias, 5 principais origens, cliques por dispositivo e por
   navegador, e data do último acesso.
-- **Seus links recentes** na página inicial (os últimos 10 criados no navegador), com botão
-  para copiar o link curto. Veja [Sem contas de usuário](#sem-contas-de-usuário).
+- **Seus links recentes** na página inicial (os últimos 10 criados no navegador), com a
+  quantidade de cliques de cada um, e a página **Meus links** (`/meus-links`) com todos eles.
+  Veja [Sem contas de usuário](#sem-contas-de-usuário).
 - **Rate limit** de criação por IP (padrão de 30 links por minuto, configurável), com `429`
   quando excedido.
 - **Páginas de erro** amigáveis (404, 410, 429, 500) sem expor detalhes internos.
@@ -56,12 +57,14 @@ de onde e de quais dispositivos o link foi acessado.
 
 ### Sem contas de usuário
 
-O Shortfy não tem cadastro nem login. Para que cada pessoa veja apenas os próprios links na
-página inicial, os códigos criados ficam guardados num **cookie do navegador**
-(`shortfy_recentes`, com os últimos 10 códigos, válido por um ano). Consequências:
+O Shortfy não tem cadastro nem login. Para que cada pessoa veja apenas os próprios links, os
+códigos criados ficam guardados num **cookie do navegador** (`shortfy_recentes`, com até 100
+códigos, válido por um ano). A página inicial mostra os 10 mais recentes e a página
+**Meus links** mostra todos. Consequências:
 
 - a lista de links recentes é **por navegador**: em outro navegador, em outro dispositivo, em
   uma janela anônima ou depois de limpar os cookies, ela aparece vazia;
+- ao passar de 100 links, os mais antigos saem do cookie e não podem ser recuperados na lista;
 - os links **continuam funcionando** e suas estatísticas continuam disponíveis; só deixam de
   aparecer na lista. Guarde o link curto ou o link de estatísticas para consultá-los depois;
 - a página de estatísticas (`/stats/:code`) é acessível a quem conhece o código, como em
