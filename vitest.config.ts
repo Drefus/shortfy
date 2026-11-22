@@ -19,7 +19,7 @@ export default defineConfig({
         // (teste de integração), e mocks de `pg` testariam apenas a implementação.
         'src/repositories/postgres-link-repository.ts',
         // Script de migração: executa SQL contra o banco configurado em DATABASE_URL.
-        'src/db/**',
+        'src/db/migrate.ts',
       ],
       reporter: ['text', 'html', 'lcov'],
       reportsDirectory: 'coverage',
