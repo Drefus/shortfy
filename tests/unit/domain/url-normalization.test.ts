@@ -54,7 +54,7 @@ describe('parseTargetUrl', () => {
   });
 
   it('deve repassar o host do encurtador para a validação', () => {
-    expect(() => parseTargetUrl('atalho.app/abc', { shortenerHost: 'atalho.app' })).toThrow(
+    expect(() => parseTargetUrl('shortfy.app/abc', { shortenerHost: 'shortfy.app' })).toThrow(
       'A URL não pode apontar para o próprio encurtador.',
     );
   });

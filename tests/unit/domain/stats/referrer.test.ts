@@ -3,7 +3,7 @@ import { DIRECT_REFERRER, normalizeReferrer } from '../../../../src/domain/stats
 
 describe('normalizeReferrer', () => {
   it('deve devolver apenas o hostname de um referer https', () => {
-    expect(normalizeReferrer('https://www.google.com/search?q=atalho')).toBe('www.google.com');
+    expect(normalizeReferrer('https://www.google.com/search?q=shortfy')).toBe('www.google.com');
   });
 
   it('deve devolver o hostname de um referer http', () => {
