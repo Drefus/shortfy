@@ -189,17 +189,22 @@ describe('LinkService', () => {
     });
   });
 
-  describe('listRecent', () => {
-    it('deve listar os links do mais novo para o mais antigo, até o limite', async () => {
+  describe('findLinks', () => {
+    it('deve devolver os links na ordem dos códigos informados', async () => {
       await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
-      agora = new Date('2026-03-10T13:00:00Z');
-      await service.createLink({ url: 'https://dois.com', alias: 'dois' });
-      agora = new Date('2026-03-10T14:00:00Z');
-      await service.createLink({ url: 'https://tres.com', alias: 'tres' });
+      await service.createLink({ url: 'https://dois.com', alias: 'segundo' });
 
-      const recentes = await service.listRecent(2);
+      const links = await service.findLinks(['segundo', 'primeiro']);
 
-      expect(recentes.map((link) => link.code)).toEqual(['tres', 'dois']);
+      expect(links.map((link) => link.code)).toEqual(['segundo', 'primeiro']);
+    });
+
+    it('deve ignorar códigos que não existem', async () => {
+      await service.createLink({ url: 'https://um.com', alias: 'primeiro' });
+
+      const links = await service.findLinks(['naoexiste', 'primeiro']);
+
+      expect(links.map((link) => link.code)).toEqual(['primeiro']);
     });
   });
 

@@ -29,19 +29,46 @@ describe('páginas web', () => {
       expect(response.text).toContain('data-testid="shorten-button"');
     });
 
-    it('deve informar quando ainda não há links criados', async () => {
+    it('deve informar quando o navegador ainda não criou links', async () => {
       const response = await request(app).get('/');
 
-      expect(response.text).toContain('Nenhum link criado ainda.');
+      expect(response.text).toContain('Você ainda não criou links neste navegador.');
     });
 
-    it('deve listar os links criados recentemente', async () => {
-      await enviarFormulario({ url: 'https://example.com/um', alias: 'link-um' });
+    it('deve listar os links criados neste navegador', async () => {
+      const navegador = request.agent(app);
+      await navegador
+        .post('/')
+        .type('form')
+        .send({ url: 'https://example.com/um', alias: 'link-um' });
 
-      const response = await request(app).get('/');
+      const response = await navegador.get('/');
 
       expect(response.text).toContain('data-testid="recent-links"');
       expect(response.text).toContain('https://shortfy.app/link-um');
+    });
+
+    it('não deve mostrar links criados em outro navegador', async () => {
+      await request
+        .agent(app)
+        .post('/')
+        .type('form')
+        .send({ url: 'https://example.com', alias: 'alheio' });
+
+      const response = await request.agent(app).get('/');
+
+      expect(response.text).not.toContain('https://shortfy.app/alheio');
+      expect(response.text).toContain('Você ainda não criou links neste navegador.');
+    });
+
+    it('deve listar primeiro o link criado por último', async () => {
+      const navegador = request.agent(app);
+      await navegador.post('/').type('form').send({ url: 'https://um.com', alias: 'primeiro' });
+      await navegador.post('/').type('form').send({ url: 'https://dois.com', alias: 'segundo' });
+
+      const { text } = await navegador.get('/');
+
+      expect(text.indexOf('/segundo')).toBeLessThan(text.indexOf('/primeiro'));
     });
 
     it('deve ignorar o parâmetro criado com código inexistente', async () => {
@@ -53,6 +80,15 @@ describe('páginas web', () => {
   });
 
   describe('POST /', () => {
+    it('deve guardar o código criado num cookie httpOnly do navegador', async () => {
+      const response = await enviarFormulario({ url: 'example.com', alias: 'promo' });
+
+      const cookie = String(response.headers['set-cookie']);
+      expect(cookie).toContain('shortfy_recentes=promo');
+      expect(cookie).toContain('HttpOnly');
+      expect(cookie).toContain('SameSite=Lax');
+    });
+
     it('deve criar o link e redirecionar para a página de resultado', async () => {
       const response = await enviarFormulario({ url: 'example.com', alias: 'promo' });
 

@@ -93,9 +93,9 @@
 </div>
 
 <section class="card recent-card" aria-labelledby="titulo-recentes">
-  <h2 id="titulo-recentes">Links recentes</h2>
+  <h2 id="titulo-recentes">Seus links recentes</h2>
   <% if (recent.length === 0) { %>
-  <p class="muted" data-testid="recent-empty">Nenhum link criado ainda.</p>
+  <p class="muted" data-testid="recent-empty">Você ainda não criou links neste navegador.</p>
   <% } else { %>
   <ul class="recent-list" data-testid="recent-links">
     <% recent.forEach((link) => { %>
