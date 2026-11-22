@@ -1,0 +1,10 @@
+<%- include('partials/header') %>
+
+<section class="card error-page" aria-labelledby="titulo-erro" data-testid="error-page">
+  <p class="error-status" data-testid="error-status"><%= status %></p>
+  <h1 id="titulo-erro"><%= title %></h1>
+  <p data-testid="error-message"><%= message %></p>
+  <a class="btn btn-primary" href="/">Criar um novo link</a>
+</section>
+
+<%- include('partials/footer') %>

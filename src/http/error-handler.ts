@@ -8,6 +8,7 @@ import {
   LinkExpiredError,
   LinkNotFoundError,
 } from '../domain/errors.js';
+import { TooManyRequestsError } from './rate-limit.js';
 
 export interface HttpError {
   status: number;
@@ -23,6 +24,7 @@ const STATUS_BY_ERROR: ReadonlyArray<[new (...args: never[]) => Error, number]> 
   [LinkNotFoundError, 404],
   [AliasTakenError, 409],
   [LinkExpiredError, 410],
+  [TooManyRequestsError, 429],
   [CodeGenerationError, 503],
 ];
 
@@ -46,28 +48,20 @@ export function toHttpError(error: unknown): HttpError {
   return INTERNAL_ERROR;
 }
 
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
+const PAGE_TITLES: Record<number, string> = {
+  404: 'Link não encontrado',
+  410: 'Link expirado',
+  429: 'Muitas requisições',
+};
 
-/** Rotas /api respondem JSON; as demais (acesso ao link curto) respondem uma página HTML. */
+/** Rotas /api respondem JSON; as demais respondem a página de erro. */
 function sendError(req: Request, res: Response, { status, message }: HttpError): void {
+  res.status(status);
   if (req.path.startsWith('/api/')) {
-    res.status(status).json({ error: message });
+    res.json({ error: message });
     return;
   }
-  res
-    .status(status)
-    .type('html')
-    .send(
-      `<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><title>Shortfy</title></head>` +
-        `<body><h1>${status}</h1><p>${escapeHtml(message)}</p><a href="/">Voltar ao início</a></body></html>`,
-    );
+  res.render('error', { status, message, title: PAGE_TITLES[status] ?? 'Algo deu errado' });
 }
 
 export const errorHandler: ErrorRequestHandler = (error, req, res, _next) => {

@@ -1,0 +1,117 @@
+<%- include('partials/header', { pageClass: 'page-home', mainClass: 'home' }) %>
+
+<div class="home-main">
+<section class="card" aria-labelledby="titulo-encurtar">
+  <h1 id="titulo-encurtar">Encurte seus links</h1>
+  <p class="muted">Cole uma URL longa, escolha um apelido se quiser e acompanhe os cliques.</p>
+
+  <form method="post" action="/" class="form" novalidate data-testid="shorten-form">
+    <div class="field">
+      <label for="url">URL de destino</label>
+      <input
+        id="url"
+        name="url"
+        type="text"
+        inputmode="url"
+        autocomplete="url"
+        maxlength="2048"
+        required
+        placeholder="https://exemplo.com/uma/pagina/bem/longa"
+        value="<%= values.url %>"
+        data-testid="url-input"
+        <% if (errors.url) { %>aria-invalid="true" aria-describedby="erro-url"<% } %>
+      />
+      <% if (errors.url) { %>
+      <p id="erro-url" class="field-error" role="alert" data-testid="error-url"><%= errors.url %></p>
+      <% } %>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="alias">Apelido <span class="optional">(opcional)</span></label>
+        <input
+          id="alias"
+          name="alias"
+          type="text"
+          maxlength="30"
+          placeholder="minha-loja"
+          value="<%= values.alias %>"
+          data-testid="alias-input"
+          aria-describedby="<%= errors.alias ? 'erro-alias' : 'dica-alias' %>"
+          <% if (errors.alias) { %>aria-invalid="true"<% } %>
+        />
+        <% if (errors.alias) { %>
+        <p id="erro-alias" class="field-error" role="alert" data-testid="error-alias"><%= errors.alias %></p>
+        <% } else { %>
+        <p id="dica-alias" class="hint">3 a 30 letras, números, hífen ou sublinhado.</p>
+        <% } %>
+      </div>
+
+      <div class="field">
+        <label for="expiresAt">Expira em <span class="optional">(opcional)</span></label>
+        <input
+          id="expiresAt"
+          name="expiresAt"
+          type="datetime-local"
+          value="<%= values.expiresAt %>"
+          data-testid="expires-input"
+          aria-describedby="<%= errors.expiresAt ? 'erro-expiracao' : 'dica-expiracao' %>"
+          <% if (errors.expiresAt) { %>aria-invalid="true"<% } %>
+        />
+        <% if (errors.expiresAt) { %>
+        <p id="erro-expiracao" class="field-error" role="alert" data-testid="error-expires"><%= errors.expiresAt %></p>
+        <% } else { %>
+        <p id="dica-expiracao" class="hint">Em branco, o link nunca expira.</p>
+        <% } %>
+      </div>
+    </div>
+
+    <input type="hidden" name="timezoneOffset" value="" />
+    <button type="submit" class="btn btn-primary" data-testid="shorten-button">Encurtar</button>
+  </form>
+</section>
+
+<% if (created) { %>
+<section class="card result" aria-labelledby="titulo-resultado" data-testid="result">
+  <div class="result-head">
+    <h2 id="titulo-resultado">Link criado!</h2>
+    <div class="result-actions">
+      <a href="<%= created.statsPath %>" data-testid="stats-link">Ver estatísticas</a>
+      <a class="close-button" href="/" aria-label="Fechar e criar outro link" title="Fechar" data-testid="close-result">×</a>
+    </div>
+  </div>
+  <div class="copy-row">
+    <a id="link-curto" class="short-url" href="<%= created.shortUrl %>" data-testid="short-url"><%= created.shortUrl %></a>
+    <button type="button" class="btn btn-secondary btn-small" data-copy="#link-curto" data-testid="copy-button">Copiar</button>
+  </div>
+  <p class="muted result-dest" title="<%= created.originalUrl %>">
+    Destino: <%= created.originalUrl %><% if (created.expiresAt) { %> · expira em <%= formatDateTime(created.expiresAt) %><% } %>
+  </p>
+</section>
+<% } %>
+
+</div>
+
+<section class="card recent-card" aria-labelledby="titulo-recentes">
+  <h2 id="titulo-recentes">Links recentes</h2>
+  <% if (recent.length === 0) { %>
+  <p class="muted" data-testid="recent-empty">Nenhum link criado ainda.</p>
+  <% } else { %>
+  <ul class="recent-list" data-testid="recent-links">
+    <% recent.forEach((link) => { %>
+    <li class="recent-item">
+      <div class="recent-main">
+        <a class="short-url" href="<%= link.shortUrl %>"><%= link.shortUrl %></a>
+        <span class="muted recent-url" title="<%= link.originalUrl %>"><%= link.originalUrl %></span>
+      </div>
+      <div class="recent-meta">
+        <span class="muted"><%= formatDateTime(link.createdAt) %></span>
+        <a href="<%= link.statsPath %>">Estatísticas</a>
+      </div>
+    </li>
+    <% }) %>
+  </ul>
+  <% } %>
+</section>
+
+<%- include('partials/footer') %>

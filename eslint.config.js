@@ -22,4 +22,12 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
+  {
+    // Scripts servidos ao navegador: sem módulos nem APIs do Node.
+    files: ['src/public/**/*.js'],
+    languageOptions: {
+      sourceType: 'script',
+      globals: { ...globals.browser },
+    },
+  },
 );

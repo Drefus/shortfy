@@ -13,6 +13,13 @@ interface Window {
   count: number;
 }
 
+export class TooManyRequestsError extends Error {
+  constructor() {
+    super('Muitas requisições. Tente novamente em instantes.');
+    this.name = 'TooManyRequestsError';
+  }
+}
+
 /** Limitador de janela fixa em memória: cada chave tem até `limit` requisições por janela. */
 export class FixedWindowRateLimiter {
   private readonly windows = new Map<string, Window>();
@@ -39,14 +46,14 @@ export class FixedWindowRateLimiter {
   }
 }
 
-/** Middleware que responde 429 quando o IP excede o limite. */
+/** Middleware que encaminha TooManyRequestsError (429) quando o IP excede o limite. */
 export function rateLimit(options: RateLimitOptions): RequestHandler {
   const limiter = new FixedWindowRateLimiter(options);
-  return (req, res, next) => {
+  return (req, _res, next) => {
     if (limiter.tryConsume(req.ip ?? 'desconhecido')) {
       next();
       return;
     }
-    res.status(429).json({ error: 'Muitas requisições. Tente novamente em instantes.' });
+    next(new TooManyRequestsError());
   };
 }
