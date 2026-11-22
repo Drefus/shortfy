@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
   AliasTakenError,
+  CodeGenerationError,
   DomainError,
   InvalidAliasError,
+  InvalidExpirationError,
   InvalidUrlError,
   LinkExpiredError,
   LinkNotFoundError,
@@ -15,6 +17,8 @@ describe('erros de domínio', () => {
     new AliasTakenError('promo'),
     new LinkNotFoundError('abc1234'),
     new LinkExpiredError('abc1234'),
+    new InvalidExpirationError('x'),
+    new CodeGenerationError(5),
   ])('deve permitir capturar $name como DomainError', (erro) => {
     expect(erro).toBeInstanceOf(DomainError);
   });
