@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? 'list' : 'html',
+  // No CI, o HTML é publicado como artefato quando algum teste falha.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'html',
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'on-first-retry',
@@ -17,6 +18,13 @@ export default defineConfig({
     command: 'npm run start:e2e',
     url: `http://localhost:${PORT}/health`,
     reuseExistingServer: !process.env.CI,
-    env: { PORT: String(PORT), STORAGE: 'memory' },
+    // NODE_ENV=test habilita /__test/destino, usado como destino local dos redirecionamentos.
+    // Todos os testes criam links do mesmo IP: o limite alto evita respostas 429 entre eles.
+    env: {
+      PORT: String(PORT),
+      STORAGE: 'memory',
+      NODE_ENV: 'test',
+      RATE_LIMIT_PER_MINUTE: '1000',
+    },
   },
 });

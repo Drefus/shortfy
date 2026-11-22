@@ -1,11 +1,11 @@
 {
-  "name": "atalho",
+  "name": "shortfy",
   "version": "0.1.0",
-  "description": "Atalho: encurtador de links com estatísticas",
+  "description": "Shortfy: encurtador de links com estatísticas",
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "cross-env STORAGE=memory tsx watch src/server.ts",
@@ -43,6 +43,7 @@
     "vitest": "^3.2.7"
   },
   "dependencies": {
+    "ejs": "^7.0.2",
     "express": "^4.22.3",
     "pg": "^8.23.1"
   }

@@ -102,28 +102,30 @@ describe('validateUrl', () => {
   });
 
   describe('proteção contra loops', () => {
-    const options = { shortenerHost: 'atalho.app' };
+    const options = { shortenerHost: 'shortfy.app' };
 
     it('deve rejeitar URL que aponta para o próprio encurtador', () => {
-      expect(() => validateUrl('https://atalho.app/abc1234', options)).toThrow(
+      expect(() => validateUrl('https://shortfy.app/abc1234', options)).toThrow(
         'A URL não pode apontar para o próprio encurtador.',
       );
     });
 
     it('deve rejeitar URL para o encurtador independentemente de maiúsculas', () => {
-      expect(() => validateUrl('https://ATALHO.app/abc1234', options)).toThrow(InvalidUrlError);
+      expect(() => validateUrl('https://SHORTFY.app/abc1234', options)).toThrow(InvalidUrlError);
     });
 
     it('deve rejeitar URL para um subdomínio do encurtador', () => {
-      expect(() => validateUrl('https://www.atalho.app/abc1234', options)).toThrow(InvalidUrlError);
+      expect(() => validateUrl('https://www.shortfy.app/abc1234', options)).toThrow(
+        InvalidUrlError,
+      );
     });
 
     it('deve aceitar domínio que apenas termina com o mesmo texto do encurtador', () => {
-      expect(validateUrl('https://meuatalho.app/', options)).toBe('https://meuatalho.app/');
+      expect(validateUrl('https://meushortfy.app/', options)).toBe('https://meushortfy.app/');
     });
 
     it('deve aceitar qualquer domínio quando o host do encurtador não é informado', () => {
-      expect(validateUrl('https://atalho.app/abc1234')).toBe('https://atalho.app/abc1234');
+      expect(validateUrl('https://shortfy.app/abc1234')).toBe('https://shortfy.app/abc1234');
     });
   });
 });
@@ -138,6 +140,6 @@ describe('isValidUrl', () => {
   });
 
   it('deve considerar o host do encurtador ao validar', () => {
-    expect(isValidUrl('https://atalho.app/x', { shortenerHost: 'atalho.app' })).toBe(false);
+    expect(isValidUrl('https://shortfy.app/x', { shortenerHost: 'shortfy.app' })).toBe(false);
   });
 });

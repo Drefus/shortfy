@@ -1,0 +1,106 @@
+<%- include('partials/header') %>
+
+<section class="card" aria-labelledby="titulo-stats">
+  <p><a href="/">← Voltar</a></p>
+  <h1 id="titulo-stats">Estatísticas de /<%= link.code %></h1>
+  <dl class="details">
+    <dt>Link curto</dt>
+    <dd class="copy-row">
+      <a id="link-curto" class="short-url" href="<%= link.shortUrl %>" data-testid="short-url"><%= link.shortUrl %></a>
+      <button type="button" class="btn btn-secondary" data-copy="#link-curto" data-testid="copy-button">Copiar</button>
+    </dd>
+    <dt>Destino</dt>
+    <dd class="break" data-testid="original-url"><a href="<%= link.originalUrl %>" rel="noopener noreferrer"><%= link.originalUrl %></a></dd>
+    <dt>Criado em</dt>
+    <dd><%= formatDateTime(link.createdAt) %></dd>
+    <% if (link.expiresAt) { %>
+    <dt>Expira em</dt>
+    <dd><%= formatDateTime(link.expiresAt) %></dd>
+    <% } %>
+  </dl>
+</section>
+
+<section class="metrics" aria-label="Resumo">
+  <div class="card metric">
+    <span class="metric-label">Total de cliques</span>
+    <strong class="metric-value" data-testid="total-clicks"><%= stats.total %></strong>
+  </div>
+  <div class="card metric">
+    <span class="metric-label">Último clique</span>
+    <strong class="metric-value metric-small" data-testid="last-click">
+      <%= stats.lastClickAt ? formatDateTime(stats.lastClickAt) : 'Nenhum clique ainda' %>
+    </strong>
+  </div>
+</section>
+
+<section class="card" aria-labelledby="titulo-grafico">
+  <h2 id="titulo-grafico">Cliques nos últimos 7 dias</h2>
+  <div class="chart-box">
+    <canvas
+      id="grafico-cliques"
+      role="img"
+      aria-label="Gráfico de linha com os cliques por dia nos últimos 7 dias"
+      data-labels="<%= JSON.stringify(chart.labels) %>"
+      data-values="<%= JSON.stringify(chart.values) %>"
+    ></canvas>
+  </div>
+  <details>
+    <summary>Ver dados do gráfico</summary>
+    <table class="table">
+      <thead><tr><th scope="col">Dia</th><th scope="col">Cliques</th></tr></thead>
+      <tbody>
+        <% chart.labels.forEach((dia, i) => { %>
+        <tr><td><%= dia %></td><td><%= chart.values[i] %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </details>
+</section>
+
+<div class="grid-3">
+  <section class="card" aria-labelledby="titulo-referers">
+    <h2 id="titulo-referers">Origens</h2>
+    <% if (stats.topReferrers.length === 0) { %>
+    <p class="muted">Nenhum clique registrado.</p>
+    <% } else { %>
+    <table class="table" data-testid="referrers-table">
+      <thead><tr><th scope="col">Origem</th><th scope="col">Cliques</th></tr></thead>
+      <tbody>
+        <% stats.topReferrers.forEach((item) => { %>
+        <tr><td class="break"><%= item.label %></td><td><%= item.count %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+  </section>
+
+  <section class="card" aria-labelledby="titulo-dispositivos">
+    <h2 id="titulo-dispositivos">Dispositivos</h2>
+    <table class="table" data-testid="devices-table">
+      <thead><tr><th scope="col">Dispositivo</th><th scope="col">Cliques</th></tr></thead>
+      <tbody>
+        <% devices.forEach((item) => { %>
+        <tr><td><%= item.label %></td><td><%= item.count %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="card" aria-labelledby="titulo-navegadores">
+    <h2 id="titulo-navegadores">Navegadores</h2>
+    <% if (stats.byBrowser.length === 0) { %>
+    <p class="muted">Nenhum clique registrado.</p>
+    <% } else { %>
+    <table class="table" data-testid="browsers-table">
+      <thead><tr><th scope="col">Navegador</th><th scope="col">Cliques</th></tr></thead>
+      <tbody>
+        <% stats.byBrowser.forEach((item) => { %>
+        <tr><td><%= item.label %></td><td><%= item.count %></td></tr>
+        <% }) %>
+      </tbody>
+    </table>
+    <% } %>
+  </section>
+</div>
+
+<%- include('partials/footer', { withChart: true }) %>

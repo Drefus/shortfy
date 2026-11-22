@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+    <meta name="description" content="Shortfy: encurte links e acompanhe quantos cliques eles recebem." />
+    <link rel="stylesheet" href="/static/css/styles.css" />
+  </head>
+  <body class="<%= locals.pageClass || '' %>">
+    <a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+    <header class="site-header">
+      <div class="container">
+        <a class="brand" href="/" aria-label="Shortfy, página inicial">
+          <span class="brand-mark" aria-hidden="true">↗</span> Shortfy
+        </a>
+      </div>
+    </header>
+    <main id="conteudo" class="container <%= locals.mainClass || '' %>">
