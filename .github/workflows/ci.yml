@@ -44,8 +44,11 @@ jobs:
           fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      # --with-deps só no Linux (bibliotecas do sistema). No Windows ele instala o recurso
+      # Media Foundation, que leva ~3 min e não é usado pelos testes headless.
+      # --only-shell baixa apenas o Chromium headless, o único usado nos testes.
       - name: Instala o Chromium do Playwright
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install ${{ runner.os == 'Linux' && '--with-deps' || '' }} --only-shell chromium
 
       - run: npm run test:e2e
 
