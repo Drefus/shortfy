@@ -14,6 +14,12 @@
   --radius: 12px;
 }
 
+/* Reserva sempre o espaço da barra de rolagem: páginas que rolam e que não rolam
+   ficam com a mesma largura útil, sem deslocar header e conteúdo. */
+html {
+  scrollbar-gutter: stable;
+}
+
 *,
 *::before,
 *::after {
