@@ -7,7 +7,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: process.env.CI ? 'list' : 'html',
+  // No CI, o HTML é publicado como artefato quando algum teste falha.
+  reporter: process.env.CI ? [['list'], ['html', { open: 'never' }]] : 'html',
   use: {
     baseURL: `http://localhost:${PORT}`,
     trace: 'on-first-retry',
