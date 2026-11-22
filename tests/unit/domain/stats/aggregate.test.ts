@@ -85,6 +85,18 @@ describe('aggregateClicks', () => {
       expect(soma).toBe(0);
     });
 
+    it('deve agrupar os dias no fuso informado', () => {
+      // 01:30 UTC do dia 10 ainda é 22:30 do dia 9 em São Paulo (UTC-3).
+      const clicks = [click({ timestamp: new Date('2026-03-10T01:30:00Z') })];
+      const dias = aggregateClicks(clicks, agora, 'America/Sao_Paulo').clicksPerDay;
+      expect(dias.find((d) => d.date === '2026-03-09')?.count).toBe(1);
+    });
+
+    it('deve terminar a janela no dia atual do fuso informado', () => {
+      const dias = aggregateClicks([], new Date('2026-03-10T02:00:00Z'), 'America/Sao_Paulo');
+      expect(dias.clicksPerDay.at(-1)?.date).toBe('2026-03-09');
+    });
+
     it('deve atravessar a virada de mês na janela de 7 dias', () => {
       const dias = aggregateClicks([], new Date('2026-03-02T08:00:00Z')).clicksPerDay;
       expect(dias.map((d) => d.date)).toEqual([
