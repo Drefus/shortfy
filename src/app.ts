@@ -35,6 +35,12 @@ export interface AppDeps {
   /** Endereço público usado para montar os links curtos (BASE_URL). */
   baseUrl?: string;
   rateLimit?: { limit: number; windowMs: number };
+  /**
+   * Número de proxies reversos confiáveis (TRUST_PROXY). Atrás do proxy do Render,
+   * o IP real do cliente só aparece em X-Forwarded-For; sem isso, o rate limit
+   * veria todas as requisições vindas do mesmo IP (o do proxy).
+   */
+  trustProxy?: number;
   /** Habilita rotas de apoio aos testes e2e (apenas com NODE_ENV=test). */
   enableTestRoutes?: boolean;
 }
@@ -55,6 +61,7 @@ export function createApp(deps: AppDeps = {}): Express {
   const app = express();
 
   app.disable('x-powered-by');
+  app.set('trust proxy', deps.trustProxy ?? 0);
   app.set('view engine', 'ejs');
   app.set('views', path.join(SRC_DIR, 'views'));
   app.locals.formatDateTime = formatDateTime;

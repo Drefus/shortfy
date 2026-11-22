@@ -144,6 +144,31 @@ describe('API de links', () => {
 
       expect(response.status).toBe(429);
     });
+
+    it('deve limitar por IP real do cliente quando há proxy confiável', async () => {
+      app = buildApp({ rateLimit: { limit: 1, windowMs: 60_000 }, trustProxy: 1 });
+      const criar = (ip: string) =>
+        request(app)
+          .post('/api/links')
+          .set('X-Forwarded-For', ip)
+          .send({ url: 'https://example.com' });
+      await criar('203.0.113.1');
+
+      expect((await criar('203.0.113.2')).status).toBe(201);
+      expect((await criar('203.0.113.1')).status).toBe(429);
+    });
+
+    it('deve ignorar X-Forwarded-For quando não há proxy confiável', async () => {
+      app = buildApp({ rateLimit: { limit: 1, windowMs: 60_000 } });
+      const criar = (ip: string) =>
+        request(app)
+          .post('/api/links')
+          .set('X-Forwarded-For', ip)
+          .send({ url: 'https://example.com' });
+      await criar('203.0.113.1');
+
+      expect((await criar('203.0.113.2')).status).toBe(429);
+    });
   });
 
   describe('GET /api/links/:code/stats', () => {
